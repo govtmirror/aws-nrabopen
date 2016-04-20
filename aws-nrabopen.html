@@ -1,0 +1,468 @@
+<!--
+@license
+Copyright (c) 2015 NMB software team 202-6925-000. All rights reserved.
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../app-layout/app-header/app-header.html">
+<link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../iron-list/iron-list.html">
+<link rel="import" href="../firebase-element/firebase-collection.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<!--
+
+Example:
+
+    <aws-nrabopen></aws-nrabopen>
+
+Example:
+
+    <aws-nrabopen>
+      <h2>Hello aws-nrabopen</h2>
+    </aws-nrabopen>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="aws-nrabopen">
+  <template>
+    <style>
+      :host {
+        /*display: block;
+        box-sizing: border-box;*/
+
+        @apply(--layout-fullbleed);
+        font-family: 'Roboto', 'Noto', sans-serif;
+        background-color: #ddd;
+      }
+
+      paper-button {
+        width: 100%;
+        height: 100%;
+      }
+
+    
+
+      .app-toolbar {
+        background-color: var(--light-primary-color);
+        color: black;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        padding:20px;
+        margin-bottom: 10px;
+        border-radius: 15px;
+      }
+
+      .flexchild {
+        @apply(--layout-flex);
+      }
+
+      span {
+        margin:5px;
+      }
+
+      iron-image {
+        back
+      }
+     
+
+      
+      #loadingspinner {
+        position: fixed;
+        top:50%;
+        left:50%;
+        margin-left:-14px;
+        margin-top:-14px;
+      }
+      #filtertext {
+        /*margin-top:100px;*/
+        background-color: white;
+        color:black;
+        /*height:40px;*/
+      }
+
+      .caseloadtitle {
+        @apply(--paper-font-display2);
+        margin-left:20px;
+      }
+
+      td {
+        background-color: white;
+        padding:5px;
+      }
+
+      table {
+        background-color: #ccc;
+      }
+
+      paper-dialog {
+        background-color: #ddf;
+        width:80%;
+      }
+
+     
+
+      /*#mylist {
+        margin-top: 65px;
+      }*/
+
+      .w150 {
+        width: 15%;
+      }
+      .w200 {
+        width: 15%;
+      }
+      .w300 {
+        width: 30%;
+      }
+      .w100 {
+        width: 10%;
+        text-align: center;
+      }
+
+      #header {
+        background-color: red;
+        width:1250px;
+        border-radius: 15px;
+        height:150px;
+      }
+     </style>
+
+
+
+
+    <paper-spinner id="loadingspinner" active></paper-spinner>
+
+    <paper-dialog opened modal>
+      <h2>NMB Open NRAB Case Report Site Terms of Use</h2>
+      <paper-dialog-scrollable>
+        <p>
+          <strong>IMPORTANT</strong>
+        </p>
+        <p >By entering this site you agree to the terms
+          of use explained below.</p>
+        <p>The National Mediation Board (NMB) maintains this web site to
+          enhance public access to the NMB's information. This is a service
+          that is continually under development. While we try to keep the
+          information timely and accurate, we make no guarantees. We will make
+          an effort to correct errors brought to our attention. Users should be
+          aware that some of the documents and information available on this
+          web site may not reflect official positions of the NMB.</p>
+        <p>Any person accessing the National Mediation Board or National
+          Mediation Board Knowledge Store (NMB/Knowledge Store) sites agrees
+          not to use the site for sale, trade or other commercial purposes.</p>
+        <p>THE MATERIALS IN THIS SITE ARE PROVIDED "AS IS" AND WITHOUT
+          WARRANTIES OF ANY KIND EITHER EXPRESS OR IMPLIED. TO THE FULLEST
+          EXTENT PERMISSIBLE PURSUANT TO APPLICABLE LAW, THE NMB DISCLAIMS ALL
+          WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+          IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+          PURPOSE. THE NMB DOES NOT WARRANT OR REPRESENT THAT THE INFORMATION
+          IS ACCURATE OR RELIABLE OR THAT THE SITE WILL BE FREE OF ERRORS OR
+          VIRUSES.</p>
+        <p>Under no circumstances, including but not limited to
+          negligence, will the NMB be liable for special or consequential
+          damages that result from the use or inability to use the materials in
+          this site. In no event shall the NMB ’ s liability to a user for any
+          loss, damage or claim exceed the amount paid by the user for
+          accessing this site.</p>
+        <p>This agreement is effective until terminated by either party.
+          You may terminate this agreement at any time by discontinuing your
+          use of the NMB/ Knowledge Store sites and destroying all materials
+          obtained from it.</p>
+        <p>
+          <strong>The NMB’s Arbitrators’ Case Report is a listing of
+            all cases assigned to arbitrators and all cases which have been
+            funded.</strong>
+        </p>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>Accept</paper-button>
+      </div>
+    </paper-dialog>
+
+
+    <!-- <app-toolbar>
+      <div title>Caseload Report, total cases = {{_caseCount}}</div>
+      <span>Filter:&nbsp;&nbsp;</span>
+      <input type="text" id="filtertext" on-change="_doFilter"></input>
+    </app-toolbar> -->
+
+
+
+ 
+
+    <div class="app-toolbar"> 
+      <iron-image style="width:150px; height:150px;" sizing="contain"
+          src="../nmb-private-pages/nmb_logo-new.gif"></iron-image>
+      <div class="caseloadtitle">NRAB Open Report</div>
+      <div class="flexchild"></div>
+      <div>
+        <span>Filter:&nbsp;&nbsp;
+        <input type="text" id="filtertext" on-change="_doFilter"></input></span><br>
+        <span>total cases = {{_caseCount}}</span>
+      </div>
+      
+    </div>
+    
+
+    <table id="mylist">
+      <tr>
+        <th class="w150"><paper-button on-tap="_arbCaseSort">Arbitrator</paper-button></th>
+        <th class="w200"><paper-button on-tap="_caseSort">Case</paper-button></th>
+        <th class="w300"><paper-button on-tap="_carrierSort">Carrier</paper-button></th>
+        <th class="w300"><paper-button on-tap="_unionSort">Union</paper-button></th>
+        <th class="w100"><paper-button on-tap="_openedSort">Opened</paper-button></th>
+        <th class="w100"><paper-button noink>Heard</paper-button></th>
+        <th class="w100"><paper-button noink>Late?</paper-button></th>
+      </tr>
+        <template is="dom-repeat" items="{{data}}" id="casetable" filter="_filter_that_bugger">
+          <tr class="item">
+            <td class="w150">[[item.arbitrator]]</td>
+            <td class="w200">[[item.__firebaseKey__]]</td>
+            <td class="w300">[[item.carrier]]</td>
+            <td class="w300">[[item.union]]</td>
+            <td class="w100">[[_dateConvert(item.dateOpened)]]</td>
+            <td class="w100">[[_dateConvert(item.dateHeard)]]</td>
+            <td class="w100">{{_isLate(item.dateHeard)}}</td>
+          </tr>
+        </template>
+    </table>
+    
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'aws-nrabopen',
+
+      properties: {
+        
+        fireDb: {
+          type: String,
+          value: function () {
+            return null;
+          }
+        }, 
+
+        _arbcasePath: String,
+
+        data: {
+          type: Array,
+          value: function () {
+            return []
+          }
+        },
+
+        aaa: {
+          type: Array,
+          value: function () {
+            return []
+          }
+        },
+
+        _caseCount: Number
+        
+        
+
+      },
+
+      ready: function () {
+        this._arbcasePath = this.fireDb + "/arbcases";
+        var ref = new Firebase(this._arbcasePath);
+        var jsondata = ref.orderByChild("open").equalTo(true).once("value", function(snapshot) {
+          this.aaa = [];
+          var jsondata = snapshot.val();
+          var myKeys = Object.keys(jsondata);
+          
+          for (var i = 0; i < myKeys.length; i++) {
+
+            var theKey = myKeys[i];
+            var tempstuff = jsondata[theKey];
+            if (theKey.startsWith('NRAB')) {
+              tempstuff['__firebaseKey__'] = theKey;
+              if (tempstuff.hasOwnProperty('arbitrator')){
+                tempstuff['arbitrator'] = this._validateName(tempstuff['arbitrator']);
+              }
+              
+              this.aaa.push(tempstuff);
+            }
+            
+          }
+          
+          this.aaa.sort(this._arbsort);
+          this.data = this.aaa;
+
+          this._caseCount = this.aaa.length;
+          
+          this.$.loadingspinner.removeAttribute('active');
+        }, this);
+      },
+
+      _validateName: function (name) {
+        var lower = name.toLowerCase();
+        var lowerArray = lower.split(" ");
+        var nameArray = [];
+        for (b in lowerArray) {
+          var substr = lowerArray[b];
+          var capstr = substr.charAt(0).toUpperCase() + substr.slice(1);
+          nameArray.push(capstr);
+        }
+        var validName = nameArray.pop() + ",";
+        for (a in nameArray) {
+          validName = validName + " " + nameArray[a];
+        }
+
+        return validName; 
+      },
+
+
+      _dateConvert: function (stringint) {
+        if (stringint != "" && stringint != null){
+          
+
+
+          var d = new Date(parseInt(stringint));
+          return d.toLocaleDateString();
+        } else {
+          return "";
+        }
+      }, 
+
+      _isLate: function (stringint){
+        if (stringint != "" && stringint != null){
+          var latedate = parseInt(stringint) + (90 * 24 * 3600 * 1000);
+
+
+          console.log(Date.now() + ", " + latedate);
+          if (Date.now() > latedate) {return "LATE";} else {return "no no";};
+        } else {
+          return "no";
+        }
+      }, 
+
+      _arbsort: function (a, b) {
+        var aName = "zzzzz";
+        if (a.hasOwnProperty('arbitrator')) {
+          aName = a.arbitrator;
+        }
+        
+        var bName = "zzzzz";
+        if (b.hasOwnProperty('arbitrator')) {
+          bName = b.arbitrator;
+        }
+        
+        var aCase = a.__firebaseKey__;
+        var bCase = b.__firebaseKey__;
+        if (aName > bName) {return 1;};
+        if (aName < bName) {return -1;};
+        if (aCase > bCase) {return 1;};
+        if (aCase < bCase) {return -1;};
+
+        return 0;
+      },
+
+      _arbCaseSort: function () {
+        this.data.sort(this._arbsort);
+        this.$.casetable.render();
+      },
+
+      _carrierSort: function () {
+        this.data.sort(
+            function (a,b) {
+              var aa = a.carrier;
+              var bb = b.carrier;
+              var aCase = a.__firebaseKey__;
+              var bCase = b.__firebaseKey__;  
+              if (aa > bb) {return 1;};
+              if (aa < bb) {return -1;};
+              if (aCase > bCase) {return 1;};
+              if (aCase < bCase) {return -1;};
+              return 0;
+            }
+          );
+        this.$.casetable.render();
+      },
+
+      _unionSort: function () {
+        this.data.sort(
+            function (a,b) {
+              var aa = a.union;
+              var bb = b.union;
+              var aCase = a.__firebaseKey__;
+              var bCase = b.__firebaseKey__;
+              if (aa > bb) {return 1;};
+              if (aa < bb) {return -1;};
+              if (aCase > bCase) {return 1;};
+              if (aCase < bCase) {return -1;};
+              return 0;
+            }
+          );
+        this.$.casetable.render();
+      },
+
+      _openedSort: function () {
+        this.data.sort(
+            function (a,b) {
+              var aa = a.dateOpened;
+              var bb = b.dateOpened;
+              var aCase = a.__firebaseKey__;
+              var bCase = b.__firebaseKey__;
+              if (aa > bb) {return 1;};
+              if (aa < bb) {return -1;};
+              if (aCase > bCase) {return 1;};
+              if (aCase < bCase) {return -1;};
+              return 0;
+            }
+          );
+        this.$.casetable.render();
+      },
+
+      _caseSort: function () {
+        this.data.sort(
+            function (a,b) {
+              var aa = a.__firebaseKey__;
+              var bb = b.__firebaseKey__;
+              if (aa > bb) {return 1;};
+              if (aa < bb) {return -1;};
+              return 0;
+            }
+          );
+        this.$.casetable.render();
+      },  
+
+
+      _doFilter: function () {
+        this.$.casetable.render();
+      },
+
+      _filter_that_bugger: function (item) {
+        var test = this.$.filtertext.value.toLowerCase();
+        if (test == "") {return true;};
+        if (item.hasOwnProperty('arbitrator')){
+          if (item.arbitrator.toLowerCase().includes(test)) {return true;};
+        }
+        
+        if (item.__firebaseKey__.toLowerCase().includes(test)) {return true;};
+        if (item.carrier.toLowerCase().includes(test)) {return true;};
+        if (item.union.toLowerCase().includes(test)) {return true;};
+        if (this._dateConvert(item.dateOpened).includes(test)) {return true;};
+        return false;
+      }
+
+
+
+        });
+  </script>
+</dom-module>

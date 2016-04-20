@@ -1,0 +1,40 @@
+{
+  "name": "aws-nrabopen",
+  "version": "1.0.7",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "aws-nrabopen.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/aws-nrabopen/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "app-layout": "PolymerLabs/app-layout#^0.0.14",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.0",
+    "iron-list": "PolymerElements/iron-list#^1.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.0",
+    "firebase-element": "GoogleWebComponents/firebase-element#^1.0.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.0.0",
+    "paper-input": "PolymerElements/paper-input#^1.0.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^1.0.0",
+    "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#^1.0.0",
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^1.0.0",
+    "nmb-private-pages": "NMB-Dev/nmb-private-pages#~0.0.1",
+    "iron-image": "PolymerElements/iron-image#^1.2.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0"
+  }
+}
